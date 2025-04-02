@@ -1,0 +1,60 @@
+name: Python Automation
+
+on:
+  workflow_dispatch:  # تشغيل يدوي
+  repository_dispatch:
+    types: [start-automation]  # الاستجابة لحدث repository_dispatch
+#   schedule:
+#     - cron: '0 * * * *'  # تشغيل في بداية كل ساعة
+
+jobs:
+  monitor-and-trigger:
+    runs-on: windows-latest
+    steps:
+    - name: Wait and trigger new workflow
+      run: |
+        echo "Waiting 28 minutes before starting new workflow..."
+        sleep 1680  # انتظار 28 دقيقة
+        
+    - name: Trigger new workflow
+      uses: peter-evans/repository-dispatch@v2
+      with:
+        token: ${{ secrets.WORKFLOW_PAT }}
+        event-type: start-automation
+        
+  run-automation:
+    runs-on: windows-latest
+    timeout-minutes: 30  # إيقاف العمل بعد 30 دقيقة
+    needs: []  # لا ينتظر أي job آخر
+    strategy:
+      matrix:
+        iteration: [1, 2,3,4,5]  # تحديد 5 تكرارات
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run Python script
+      run: |
+        chcp 65001
+        python py_test.py
+      env:
+        PYTHONUNBUFFERED: 1
+        PYTHONIOENCODING: utf-8
+        ITERATION_NUMBER: ${{ matrix.iteration }}  # رقم التكرار الحالي
+        
+    # خطوة لتشغيل workflow جديد قبل انتهاء الـ timeout
+    - name: Start new workflow before timeout
+      if: ${{ matrix.iteration == 2 }}  # تنفيذ فقط في التكرار الأخير
+      run: |
+        echo "Running for 28 minutes before starting a new workflow..."
+        sleep 1680  # انتظار 28 دقيقة (1680 ثانية)
