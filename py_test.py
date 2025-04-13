@@ -73,20 +73,25 @@ class BrowserAutomation:
                 continue
 
     def visit_uptodown(self, tab_index):
-        """Visit Uptodown site and download the app"""
-        try:
-            self.uptodown_driver.switch_to.window(self.uptodown_tabs[tab_index])
-            self.uptodown_driver.get("https://black-lotus.en.uptodown.com/android/download")
-            time.sleep(5)
-            
-            download_button = WebDriverWait(self.uptodown_driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "#detail-download-button"))
-            )
-            download_button.click()
-            print(f"Download button clicked in tab {tab_index}")
-            
-        except Exception as e:
-            print(f"Error in tab {tab_index}: {str(e)}")
+             try:
+                self.uptodown_driver.switch_to.window(self.uptodown_tabs[tab_index])
+                self.uptodown_driver.get("https://black-lotus.en.uptodown.com/android/download")
+                time.sleep(5)
+                
+                download_button = WebDriverWait(self.uptodown_driver, 10).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, "#detail-download-button"))
+                )
+                
+                # التمرير إلى العنصر
+                self.uptodown_driver.execute_script("arguments[0].scrollIntoView(true);", download_button)
+                time.sleep(1)  # انتظر لإكمال التمرير
+                
+                # ثم حاول النقر
+                download_button.click()
+                print(f"Download button clicked in tab {tab_index}")
+                
+             except Exception as e:
+                print(f"Error in tab {tab_index}: {str(e)}")
 
     def run(self):
         """Run main program"""
