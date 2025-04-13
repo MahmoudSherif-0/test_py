@@ -27,6 +27,7 @@ class BrowserAutomation:
         self.apkpure_tabs = []
         self.uptodown_tabs = []
         self.downloads_path = str(Path.home() / "Downloads")
+        self.total_file=0
         
     def cleanup_downloads(self):
         """Delete APK files containing the word 'black' in their name from the downloads folder"""
@@ -36,7 +37,8 @@ class BrowserAutomation:
                     file_path = os.path.join(self.downloads_path, filename)
                     try:
                         os.remove(file_path)
-                        print(f"File deleted: {filename}")
+                        self.total_file=self.total_file+1
+                        print(f"total_file deleted: {self.total_file}")
                     except Exception as e:
                         print(f"Failed to delete file {filename}: {str(e)}")
         except Exception as e:
@@ -87,7 +89,9 @@ class BrowserAutomation:
                 time.sleep(1)  # انتظر لإكمال التمرير
                 
                 # ثم حاول النقر
-                download_button.click()
+                #download_button.click()
+                self.uptodown_driver.execute_script("arguments[0].click();", download_button)
+
                 print(f"Download button clicked in tab {tab_index}")
                 
              except Exception as e:
