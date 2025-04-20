@@ -123,7 +123,7 @@ class BrowserAutomation:
         
         # Run APKPure tabs
         for i in range(10):
-            thread = threading.Thread(target=self.visit_apkpure, args=(i,))
+            thread = threading.Thread(target=self.visit_uptodown, args=(i,))
             threads.append(thread)
             thread.start()
 
