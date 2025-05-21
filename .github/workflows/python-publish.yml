@@ -3,7 +3,7 @@ name: Python Automation
 on:
   workflow_dispatch:  # تشغيل يدوي
   repository_dispatch:
-    types: [start-automation]  # الاستجابة لحدث repository_dispatch
+    types: [start-test]  # الاستجابة لحدث repository_dispatch
 #   schedule:
 #     - cron: '0 * * * *'  # تشغيل في بداية كل ساعة
 
@@ -20,7 +20,7 @@ jobs:
       uses: peter-evans/repository-dispatch@v2
       with:
         token: ${{ secrets.WORKFLOW_PAT }}
-        event-type: start-automation
+        event-type: start-test
         
   run-automation:
     runs-on: windows-latest
